@@ -33,7 +33,7 @@ void _unfairLock(void) {
 }
 
 void _dispatch_semaphore(void) {
-    // semaphore. 推荐使用. 在 iOS 中使用率比较高, 源码调用的内核函数. 稍次于 `os_unfair_lock`, 高版本可以使用 `os_unfair_lock`, 低版本使用`semaphore`
+    // semaphore. 推荐使用. 在 iOS 中使用率比较高, 源码调用的内核函数(应该和os_unfair_lock一样). 稍次于 `os_unfair_lock`, 高版本可以使用 `os_unfair_lock`, 低版本使用`semaphore`
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
     
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
