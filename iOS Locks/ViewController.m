@@ -173,6 +173,36 @@ void _synchronized(id self) {
     }
 }
 
+// multi-read, single-write lock
+void _pthread_rwlock(void) {
+    pthread_rwlock_t lock;
+    pthread_rwlock_init(&lock, NULL);
+
+    /// thread 0
+    {///< read
+        pthread_rwlock_rdlock(&lock);
+//        pthread_rwlock_tryrdlock(&lock);
+        // ...
+        pthread_rwlock_unlock(&lock);
+    }
+
+    /// thread 1
+    {///< read
+        pthread_rwlock_rdlock(&lock);
+        // ...
+        pthread_rwlock_unlock(&lock);
+    }
+    
+    /// thread 2
+    {///< write
+        pthread_rwlock_wrlock(&lock);
+//        pthread_rwlock_trywrlock(&lock);
+        // ...
+        pthread_rwlock_unlock(&lock);
+    }
+
+    pthread_rwlock_destroy(&lock);
+}
 
 
 NS_ASSUME_NONNULL_BEGIN
