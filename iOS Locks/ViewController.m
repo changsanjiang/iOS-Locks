@@ -144,19 +144,25 @@ void _NSConditionLock(void) {
     
     NSConditionLock *lock = [[NSConditionLock alloc] initWithCondition:0];
     
-    // thread 0
-    [lock lock];
-    // ....
-    [lock unlockWithCondition:1];
+    /// thread 0
+    {
+        [lock lock];
+        // ....
+        [lock unlockWithCondition:1];
+    }
     
-    // thread 1
-    [lock lockWhenCondition:1];
-    // ...
-    [lock unlockWithCondition:2];
+    /// thread 1
+    {
+        [lock lockWhenCondition:1];
+        // ...
+        [lock unlockWithCondition:2];
+    }
     
-    // thread 2
-    [lock lockWhenCondition:2];
-    [lock unlock];
+    /// thread 2
+    {
+        [lock lockWhenCondition:2];
+        [lock unlock];
+    }
 }
 
 void _synchronized(id self) {
@@ -204,6 +210,21 @@ void _pthread_rwlock(void) {
     pthread_rwlock_destroy(&lock);
 }
 
+
+// multi-read, single-write
+void _barrier(void) {
+    dispatch_queue_t queue = dispatch_queue_create("com.iOSLocks.concurrentQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    for (int i = 0 ; i < 10 ; ++ i ) {
+        dispatch_async(queue, ^{
+            NSLog(@"read");
+        });
+    }
+    
+    dispatch_barrier_async(queue, ^{
+        NSLog(@"write");
+    });
+}
 
 NS_ASSUME_NONNULL_BEGIN
 @interface ViewController ()
